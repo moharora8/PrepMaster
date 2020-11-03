@@ -239,15 +239,28 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
             },
           ),
           title: Center(
-            child: Column(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                new Text(
-                  'Place Prep',
-                  style: TextStyle(color: Colors.black, fontSize: 22),
+                Image.asset(
+                  'assets/images/students-cap.png',
+                  width: 50,
+                  height: 50,
                 ),
-                Text(
-                  'Lead the way',
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  children: [
+                    new Text(
+                      'Place Prep',
+                      style: TextStyle(color: Colors.black, fontSize: 22),
+                    ),
+                    Text(
+                      'Lead the way',
+                      style: TextStyle(color: Colors.black54, fontSize: 15),
+                    ),
+                  ],
                 ),
               ],
             ),
