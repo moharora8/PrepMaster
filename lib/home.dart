@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'config/config.dart';
 import 'package:residemenu/residemenu.dart';
 import 'detail.dart';
 import 'package:share/share.dart';
@@ -29,6 +32,25 @@ class _LinkTextSpan extends TextSpan {
 }
 
 class HomeState extends State<Home> with TickerProviderStateMixin {
+  final Firestore _db = Firestore.instance;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser user;
+
+  @override
+  void initState() {
+    getUid();
+    super.initState();
+    _menuController = new MenuController(vsync: this);
+  }
+
+  void getUid() async {
+    FirebaseUser u = await _auth.currentUser();
+    setState(() {
+      user = u;
+    });
+  }
+
   MenuController _menuController;
   var data;
 
@@ -65,11 +87,9 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _menuController = new MenuController(vsync: this);
-  }
+  // @override
+  // void initState() {
+  //    }
 
   ///shows the about dialog.
   showAbout(BuildContext context) {
@@ -177,7 +197,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           constraints: new BoxConstraints(maxHeight: 80.0, maxWidth: 100.0),
           child: GestureDetector(
             child: new CircleAvatar(
-              backgroundImage: new AssetImage('assets/images/capture.png'),
+              backgroundImage: new AssetImage('assets/images/students-cap.png'),
               radius: 30.0,
             ),
             onTap: () {
@@ -222,6 +242,20 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
               onTap: () => _launchgmail(),
             ),
           ),
+          new Material(
+            color: Colors.transparent,
+            child: new InkWell(
+              child: ResideMenuItem(
+                title: 'Log Out',
+                titleStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    backgroundColor: Colors.transparent),
+                icon: const Icon(Icons.bug_report, color: Colors.black),
+              ),
+              onTap: () => _auth.signOut(),
+            ),
+          ),
         ],
       ),
       child: new Scaffold(
@@ -257,7 +291,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                       style: TextStyle(color: Colors.black, fontSize: 22),
                     ),
                     Text(
-                      'Lead the way',
+                      'Lead the Way',
                       style: TextStyle(color: Colors.black54, fontSize: 15),
                     ),
                   ],

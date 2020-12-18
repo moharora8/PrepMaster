@@ -1,4 +1,4 @@
-package com.example.place_prep
+package com.example.soft_ezi
 
 import io.flutter.embedding.android.FlutterActivity
 

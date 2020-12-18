@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:share/share.dart';
 import 'textStyle.dart';
 import 'showDetail.dart';
+import 'package:http/http.dart' as http;
 
 class Detail extends StatelessWidget {
   final data, title;
@@ -37,7 +38,11 @@ class Detail extends StatelessWidget {
   ///Takes the local json file which is not included in this repository,
   ///because that contains, Q/A data.
   _retrieveLocalData() async {
-    return await rootBundle.loadString('assets/local.json');
+    final String apiURL = "https://softezi-973d8.firebaseio.com/place.json";
+    var response = await http.get(apiURL);
+    var body = response.body;
+    return body;
+    //return await rootBundle.loadString('assets/local.json');
   }
 
   ///take the asset and decode json file.
@@ -56,7 +61,7 @@ class Detail extends StatelessWidget {
       } else {
         type = "Brainteasures";
       }
-      String jsonString = await _retrieveLocalData();
+      dynamic jsonString = await _retrieveLocalData();
       final jsonResponse = json.decode(jsonString);
       final jsonData = jsonResponse[type];
       itemList = ItemList.fromJson(jsonData);
