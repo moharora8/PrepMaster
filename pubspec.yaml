@@ -17,8 +17,14 @@ dependencies:
   font_awesome_flutter: ^8.5.0
   residemenu: ^1.3.5
   share: ^0.6.5+4
+  fluttertoast: ^3.1.3
+  image_picker: ^0.6.3+1
+  firebase_storage: ^3.0.8
+  firebase_messaging: ^5.1.2
+  shared_preferences: ^0.5.12+4
   url_launcher: ^5.7.8
   carousel_pro: ^1.0.0
+  flutter_spinkit: ^4.1.2
   firebase_auth: ^0.16.0
   cloud_firestore: ^0.12.9+6
   google_sign_in: ^4.1.1

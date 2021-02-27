@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../config/config.dart';
 //import 'package:mytask/config/config.dart';
 //import 'package:mytask/screens/email_pass_signup.dart';
 import '../screens/phone_signin_screen.dart';
@@ -17,10 +18,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _passwordController = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  //final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  final Firestore _db = Firestore.instance;
+  //final Firestore _db = Firestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -184,14 +185,14 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = _passwordController.text;
 
     if (email.isNotEmpty && password.isNotEmpty) {
-      _auth
+      PrepApp.auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((user) {
-        _db.collection("users").document(user.user.uid).setData({
+        PrepApp.firestore.collection("users").document(user.user.uid).setData({
           "email": email,
           "lastseen": DateTime.now(),
-          "signin_method": user.user.providerId
-        });
+          "signin_method": user.user.providerId,
+        }, merge: true);
 
         showDialog(
             context: context,
@@ -276,17 +277,17 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       final FirebaseUser user =
-          (await _auth.signInWithCredential(credential)).user;
+          (await PrepApp.auth.signInWithCredential(credential)).user;
       print("signed in " + user.displayName);
 
       if (user != null) {
-        _db.collection("users").document(user.uid).setData({
+        PrepApp.firestore.collection("users").document(user.uid).setData({
           "displayName": user.displayName,
           "email": user.email,
           "photoUrl": user.photoUrl,
           "lastseen": DateTime.now(),
           "signin_method": user.providerId
-        });
+        }, merge: true);
       }
     } catch (e) {
       showDialog(

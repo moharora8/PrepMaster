@@ -17,8 +17,8 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
 
   bool _isSMSsent = false;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _db = Firestore.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final Firestore _db = Firestore.instance;
 
   final TextEditingController _smsController = TextEditingController();
 
@@ -45,7 +45,7 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
                     vertical: 10,
                   ),
                   child: InternationalPhoneNumberInput(
-                  formatInput: false,
+                    formatInput: false,
                     onInputChanged: (phoneNumberTxt) {
                       _phoneNumber = phoneNumberTxt;
                     },
@@ -141,7 +141,7 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
 
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
-      _auth.signInWithCredential(phoneAuthCredential);
+      PrepApp.auth.signInWithCredential(phoneAuthCredential);
       setState(() {
         _message = 'Received phone auth credential: $phoneAuthCredential';
       });
@@ -165,7 +165,7 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
       _verificationId = verificationId;
     };
 
-    await _auth.verifyPhoneNumber(
+    await PrepApp.auth.verifyPhoneNumber(
         phoneNumber: _phoneNumber.phoneNumber,
         timeout: const Duration(seconds: 120),
         verificationCompleted: verificationCompleted,
@@ -181,16 +181,16 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
       smsCode: _smsController.text,
     );
     final FirebaseUser user =
-        (await _auth.signInWithCredential(credential)).user;
-    final FirebaseUser currentUser = await _auth.currentUser();
+        (await PrepApp.auth.signInWithCredential(credential)).user;
+    final FirebaseUser currentUser = await PrepApp.auth.currentUser();
     assert(user.uid == currentUser.uid);
     setState(() {
       if (user != null) {
-        _db.collection("users").document(user.uid).setData({
+        PrepApp.firestore.collection('users').document(user.uid).setData({
           "phonenumber": user.phoneNumber,
           "lastseen": DateTime.now(),
           "signin_method": user.providerId
-        });
+        }, merge: true);
 
         _message = 'Successfully signed in, uid: ' + user.uid;
         print(_message);

@@ -6,6 +6,8 @@ import 'package:residemenu/residemenu.dart';
 import 'detail.dart';
 import 'package:share/share.dart';
 import 'full_image.dart';
+import 'Authentication/authenication.dart';
+import 'screens/login_screen.dart';
 import 'textStyle.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher.dart' as urlLauncher;
@@ -195,21 +197,27 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       leftScaffold: new MenuScaffold(
         header: new ConstrainedBox(
           constraints: new BoxConstraints(maxHeight: 80.0, maxWidth: 100.0),
-          child: GestureDetector(
-            child: new CircleAvatar(
-              backgroundImage: new AssetImage('assets/images/students-cap.png'),
-              radius: 30.0,
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => FullImage(),
-                ),
-              );
-            },
+          child: new CircleAvatar(
+            backgroundImage: new AssetImage('assets/images/students-cap.png'),
+            radius: 30.0,
           ),
         ),
         children: <Widget>[
+          new Material(
+            color: Colors.transparent,
+            child: FittedBox(
+              child: Text(
+                'Welcome ' +
+                    PrepApp.sharedPreferences.getString(PrepApp.userName),
+                style: TextStyle(
+                    color: Colors.black,
+                    //fontSize: 14,
+                    backgroundColor: Colors.transparent),
+                //icon: const Icon(Icons.share, color: Colors.black),
+              ),
+            ),
+          ),
+
           ///I have to make these drawer list widgets manually cause it is containing different methods.
 //           added Changes
           new Material(
@@ -235,7 +243,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                 title: 'Suggestions',
                 titleStyle: TextStyle(
                     color: Colors.black,
-                    fontSize: 20.0,
+                    fontSize: 18.0,
                     backgroundColor: Colors.transparent),
                 icon: const Icon(Icons.bug_report, color: Colors.black),
               ),
@@ -245,16 +253,42 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           new Material(
             color: Colors.transparent,
             child: new InkWell(
-              child: ResideMenuItem(
-                title: 'Log Out',
-                titleStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    backgroundColor: Colors.transparent),
-                icon: const Icon(Icons.bug_report, color: Colors.black),
-              ),
-              onTap: () => _auth.signOut(),
-            ),
+                child: ResideMenuItem(
+                  title: 'Log Out',
+                  titleStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      backgroundColor: Colors.transparent),
+                  icon: const Icon(Icons.bug_report, color: Colors.black),
+                ),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (con) {
+                        return AlertDialog(
+                          title: Text('Are you sure you want to log out?'),
+                          actions: [
+                            InkWell(
+                                onTap: () {
+                                  //Navigator.pop(context);
+                                  PrepApp.auth.signOut().then((_) {
+                                    Route newRoute = MaterialPageRoute(
+                                        builder: (_) => AuthenticScreen());
+                                    Navigator.pushReplacement(
+                                        context, newRoute);
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10.0),
+                                  child: Text(
+                                    'Yes',
+                                    style: TextStyle(fontSize: 21),
+                                  ),
+                                ))
+                          ],
+                        );
+                      });
+                }),
           ),
         ],
       ),
